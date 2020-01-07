@@ -19,7 +19,7 @@ Build out Film Model with supporting tests,
 Write Film CRUD Routes with support tests,
 Refactor Studio, and Actor models/CRUD routes to work in tandem with new Film model/routes,
 Slice 6
-Build out Film Review with supporting tests, 
+Build out Review with supporting tests, 
 Write Review CRUD Routes with support tests,
 Refactor Reviewer, and Film models/CRUD routes to work in tandem with new Review model/routes,
 
