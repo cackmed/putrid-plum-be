@@ -5,6 +5,9 @@ const app = require('../lib/app');
 const connect = require('../lib/utils/connect');
 const mongoose = require('mongoose');
 const Studio = require('../lib/models/Studio');
+const Film = require('../lib/models/Film');
+const Actor = require('../lib/models/Actor');
+
 
 describe('Studio routes', () => {
   beforeAll(() => {
@@ -16,13 +19,28 @@ describe('Studio routes', () => {
   });
 
   let studio;
+  let film;
+  let actor;
   beforeEach(async() => {
     studio = await Studio.create({
       name: 'Universal Studios',
       address: [{ city: 'LA', state: 'Cal', country: 'USA', }]
     });
+    actor = await Actor.create({
+      name: 'Robert De Niro',
+      dob: new Date('8/17/1943'),
+      pob: 'New York City'
+    });
+    film = await Film.create([
+      {
+        title: 'The Irishman',
+        studio: studio._id,
+        released: 2019,
+        cast: [{ role: 'Jimmy Hoffa', actor: actor._id }]
+      }
+    ]);
   });
-
+  
   afterAll(() => {
     return mongoose.connection.close();
   });
@@ -56,7 +74,6 @@ describe('Studio routes', () => {
           expect(res.body).toContainEqual({
             _id: studio._id.toString(),
             name: studio.name,
-            address: [{ _id: expect.any(String), city: 'LA', state: 'Cal', country: 'USA', }],
             __v: 0
           });
         });
@@ -66,10 +83,11 @@ describe('Studio routes', () => {
     return request(app)
       .get(`/api/v1/studio/${studio._id}`)
       .then(res => {
-        expect(res.body).toMatchObject({
+        expect(res.body).toEqual({
           _id: studio._id.toString(),
           name:  studio.name,
           address: [{ _id: expect.any(String), city: 'LA', state: 'Cal', country: 'USA', }],
+          films: [{ _id: expect.any(String), title: expect.any(String), }],
           __v: 0
         });
       });
