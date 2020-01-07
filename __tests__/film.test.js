@@ -70,7 +70,13 @@ describe('Film routes', () => {
       .get('/api/v1/film')
       .then(res => {
         films.forEach(film => {
-          expect(res.body).toContainEqual(JSON.parse(JSON.stringify(film)));
+          expect(res.body).toContainEqual({
+            _id: film._id.toString(),
+            title: film.title,
+            studio: { _id: expect.any(String), name: expect.any(String), },
+            released: film.released,
+            __v: 0
+          });
         });
       });
   });
@@ -85,6 +91,7 @@ describe('Film routes', () => {
           studio:  JSON.parse(JSON.stringify(studio)),
           released: expect.any(Number),
           cast: [{ _id: expect.any(String), role: expect.any(String), actor: actor._id.toString() }],
+          review: expect.any(Array),
           __v: 0
         });
       });
