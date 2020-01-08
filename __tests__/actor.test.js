@@ -5,6 +5,8 @@ const app = require('../lib/app');
 const connect = require('../lib/utils/connect');
 const mongoose = require('mongoose');
 const Actor = require('../lib/models/Actor');
+const Film = require('../lib/models/Film');
+const Studio = require('../lib/models/Studio');
 
 describe('Actor routes', () => {
   beforeAll(() => {
@@ -16,13 +18,26 @@ describe('Actor routes', () => {
   });
 
   let actor;
+  let film;
+  let studio;
   beforeEach(async() => {
+    studio = await Studio.create({
+      name: 'Universal Studios',
+      address: [{ city: 'LA', state: 'Cal', country: 'USA', }]
+    });
     actor = await Actor.create({
       name: 'Robert De Niro',
       dob: new Date('8/17/1943'),
       pob: 'New York City'
     });
+    film = await Film.create({
+      title: 'The Irishman',
+      studio: studio._id,
+      released: 2019,
+      cast: [{ role: 'Frank Sheeran', actor: actor._id }]
+    });
   });
+  
 
   afterAll(() => {
     return mongoose.connection.close();
@@ -59,8 +74,6 @@ describe('Actor routes', () => {
           expect(res.body).toContainEqual({
             _id: actor._id.toString(),
             name: expect.any(String),
-            dob: expect.any(String),
-            pob: expect.any(String),
             __v: 0
           });
         });
@@ -75,6 +88,7 @@ describe('Actor routes', () => {
           name:  actor.name,
           dob: expect.any(String),
           pob: actor.pob,
+          films: [{ _id: expect.any(String), title: expect.any(String), released: expect.any(Number) }],
           __v: 0
         });
       });
