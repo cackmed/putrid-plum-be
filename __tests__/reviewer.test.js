@@ -5,6 +5,12 @@ const app = require('../lib/app');
 const connect = require('../lib/utils/connect');
 const mongoose = require('mongoose');
 const Reviewer = require('../lib/models/Reviewer');
+const Review = require('../lib/models/Review');
+const Studio = require('../lib/models/Studio');
+const Actor = require('../lib/models/Actor');
+const Film = require('../lib/models/Film');
+
+
 
 describe('Reviewer routes', () => {
   beforeAll(() => {
@@ -16,10 +22,35 @@ describe('Reviewer routes', () => {
   });
 
   let reviewer;
+  let studio;
+  let film;
+  let actor;
+  let review;
   beforeEach(async() => {
     reviewer = await Reviewer.create({
       name: 'Peter Bradshaw',
       company: 'The Guardian',
+    });
+    studio = await Studio.create({
+      name: 'Universal Studios',
+      address: [{ city: 'LA', state: 'Cal', country: 'USA', }]
+    });
+    actor = await Actor.create({
+      name: 'Robert De Niro',
+      dob: new Date('8/17/1943'),
+      pob: 'New York City'
+    });
+    film = await Film.create({
+      title: 'The Irishman',
+      studio: studio._id,
+      released: 2019,
+      cast: [{ role: 'Frank Sheeran', actor: actor._id }]
+    });
+    review = await Review.create({
+      rating: 5,
+      reviewer: reviewer._id,
+      review: 'Great movie, Alpachino has a another legendary performance',
+      film: film._id
     });
   });
 
@@ -83,6 +114,13 @@ describe('Reviewer routes', () => {
           _id: expect.any(String),
           name: 'Tonny Broadshow',
           company: 'The Guardian',
+          review: [{ 
+            _id,
+          rating,
+          review,
+          film: { _id, title }
+ 
+          }]
           __v: 0
         });
       });
