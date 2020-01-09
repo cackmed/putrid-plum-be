@@ -114,13 +114,12 @@ describe('Reviewer routes', () => {
           _id: expect.any(String),
           name: 'Tonny Broadshow',
           company: 'The Guardian',
-          review: [{ 
-            _id,
-          rating,
-          review,
-          film: { _id, title }
- 
-          }]
+          // review: [{ 
+          //   _id: expect.any(String),
+          //   rating: expect.any(Number),
+          //   review: expect.any(String),
+          //   film: { _id: expect.any(String), title: expect.any(String) }
+          // }],
           __v: 0
         });
       });
