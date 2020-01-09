@@ -1,45 +1,13 @@
-require('dotenv').config();
-
+const { getFilm, getFilms, getStudio, getActor } = require('../lib/helpers/data-helpers');
 const request = require('supertest');
 const app = require('../lib/app');
-const connect = require('../lib/utils/connect');
-const mongoose = require('mongoose');
-const Film = require('../lib/models/Film');
-const Studio = require('../lib/models/Studio');
-const Actor = require('../lib/models/Actor');
 
 describe('Film routes', () => {
-  beforeAll(() => {
-    connect();
-  });
 
-  beforeEach(() => {
-    return mongoose.connection.dropDatabase();
-  });
-
-  let actor;
-  let film;
-  let studio;
-  beforeEach(async() => {
-    studio = await Studio.create({
-      name: 'Universal Studios',
-      address: [{ city: 'LA', state: 'Cal', country: 'USA', }]
-    });
-
-    actor = await Actor.create({ name: 'Al Pacino', dob: new Date('04/25/1940'), pob: 'New York City' });
-
-    film = await Film.create({
-      title: 'The Irishman',
-      studio: studio._id,
-      released: 2019,
-      cast: [{ role: 'Jimmy Hoffa', actor: actor._id }]
-    });
-  });
-
-  afterAll(() => {
-    return mongoose.connection.close();
-  });
-  it('creates a Film', () => {
+  it('creates a Film', async() => {
+    jest.setTimeout(30000);
+    const studio = await getStudio();
+    const actor = await getActor();
     return request(app)
       .post('/api/v1/film')
       .send({
@@ -52,23 +20,20 @@ describe('Film routes', () => {
         expect(res.body).toEqual({
           _id: expect.any(String),
           title: 'The Irishman',
-          studio: studio._id.toString(),
+          studio: expect.any(String),
           released: 2019,
-          cast: [{ _id: expect.any(String), role: 'Jimmy Hoffa', actor: actor._id.toString() }],
+          cast: [{ _id: expect.any(String), role: 'Jimmy Hoffa', actor: expect.any(String) }],
           __v: 0
         });
       });
   });
   it('gets all Films', async() => {
-    const films = await Film.create([
-      { title: 'what', studio: studio._id, released: Date.now(), cast: [{ role: 'Who', actor: actor._id }] },
-      { title: 'huh', studio: studio._id, released: Date.now(), cast: [{ role: 'What', actor: actor._id }]  },
-      { title: 'maybe', studio: studio._id, released: Date.now(), cast: [{ role: 'I dont give a damn', actor: actor._id }]  }
-    ]);
-
+    jest.setTimeout(30000);
+    const films = await getFilms();
     return request(app)
       .get('/api/v1/film')
       .then(res => {
+        expect(res.body).toHaveLength(films.length);
         films.forEach(film => {
           expect(res.body).toContainEqual({
             _id: film._id.toString(),
@@ -82,15 +47,17 @@ describe('Film routes', () => {
   });
   
   it('gets an film by id', async() => {
+    jest.setTimeout(30000);
+    const film = await getFilm();
     return request(app)
       .get(`/api/v1/film/${film._id}`)
       .then(res => {
-        expect(res.body).toEqual({
+        expect(res.body).toMatchObject({
           _id: expect.any(String),
           title: expect.any(String),
-          studio:  JSON.parse(JSON.stringify(studio)),
+          studio:  expect.any(String),
           released: expect.any(Number),
-          cast: [{ _id: expect.any(String), role: expect.any(String), actor: actor._id.toString() }],
+          cast: [{ _id: expect.any(String), role: expect.any(String), actor: expect.any(String) }],
           review: expect.any(Array),
           __v: 0
         });

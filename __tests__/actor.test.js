@@ -1,48 +1,11 @@
-require('dotenv').config();
-
+const { getActor, getActors } = require('../lib/helpers/data-helpers');
 const request = require('supertest');
 const app = require('../lib/app');
-const connect = require('../lib/utils/connect');
-const mongoose = require('mongoose');
-const Actor = require('../lib/models/Actor');
-const Film = require('../lib/models/Film');
-const Studio = require('../lib/models/Studio');
 
 describe('Actor routes', () => {
-  beforeAll(() => {
-    connect();
-  });
 
-  beforeEach(() => {
-    return mongoose.connection.dropDatabase();
-  });
-
-  let actor;
-  let film;
-  let studio;
-  beforeEach(async() => {
-    studio = await Studio.create({
-      name: 'Universal Studios',
-      address: [{ city: 'LA', state: 'Cal', country: 'USA', }]
-    });
-    actor = await Actor.create({
-      name: 'Robert De Niro',
-      dob: new Date('8/17/1943'),
-      pob: 'New York City'
-    });
-    film = await Film.create({
-      title: 'The Irishman',
-      studio: studio._id,
-      released: 2019,
-      cast: [{ role: 'Frank Sheeran', actor: actor._id }]
-    });
-  });
-  
-
-  afterAll(() => {
-    return mongoose.connection.close();
-  });
   it('creates an Actor', () => {
+    jest.setTimeout(30000);
     return request(app)
       .post('/api/v1/actor')
       .send({
@@ -61,15 +24,13 @@ describe('Actor routes', () => {
       });
   });
   it('gets all Actors', async() => {
-    const actors = await Actor.create([
-      { name: 'Robert De Niro', dob: new Date('08/17/1943'), pob: 'New York City' },
-      { name: 'Tom Hanks', dob: new Date('07/9/1956'), pob: 'Concord' },
-      { name: 'Al Pacino', dob: new Date('04/25/1940'), pob: 'New York City' }
-    ]);
+    jest.setTimeout(30000);
+    const actors = await getActors();
 
     return request(app)
       .get('/api/v1/actor')
       .then(res => {
+        expect(res.body).toHaveLength(actors.length);
         actors.forEach(actor => {
           expect(res.body).toContainEqual({
             _id: actor._id.toString(),
@@ -80,6 +41,8 @@ describe('Actor routes', () => {
       });
   });
   it('gets an Actor by id', async() => {
+    jest.setTimeout(30000);
+    const actor = await getActor();
     return request(app)
       .get(`/api/v1/actor/${actor._id}`)
       .then(res => {

@@ -6,6 +6,7 @@ const app = require('../lib/app');
 describe('Studio routes', () => {
 
   it('creates a studio', () => {
+    jest.setTimeout(30000);
     return request(app)
       .post('/api/v1/studio')
       .send({
@@ -22,6 +23,7 @@ describe('Studio routes', () => {
       });
   });
   it('gets all studios', async() => {
+    jest.setTimeout(30000);
     const studios = await getStudios();
     
     return request(app)
@@ -38,6 +40,7 @@ describe('Studio routes', () => {
       });
   });
   it('gets a studio by id', async() => {
+    jest.setTimeout(30000);
     const studio = await getStudio();
 
     return request(app)
