@@ -39,26 +39,6 @@ describe('Review routes', () => {
         });
       });
   });
-
-  it('gets an Review by id', async() => {
-    jest.setTimeout(30000);
-    const review = await getReview();
-    const reviewer = await getReviewer();
-    const film = await getFilm();
-    return request(app)
-      .get(`/api/v1/review/${review._id}`)
-      .then(res => {
-        expect(res.body).toMatchObject({
-          _id: expect.any(String),
-          rating:  expect.any(Number),
-          reviewer: JSON.parse(JSON.stringify(reviewer)),
-          review: expect.any(String),
-          film: JSON.parse(JSON.stringify(film)),
-          __v: 0
-        });
-      });
-  });
-
   it('can delete a review with DELETE', async() => {
     jest.setTimeout(30000);
     const review = await getReview();
