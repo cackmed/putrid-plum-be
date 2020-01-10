@@ -53,9 +53,9 @@ describe('Film routes', () => {
       .get(`/api/v1/film/${film._id}`)
       .then(res => {
         expect(res.body).toMatchObject({
-          _id: expect.any(String),
+          _id: film._id.toString(),
           title: expect.any(String),
-          studio:  expect.any(String),
+          studio:  { _id: expect.any(String), name: expect.any(String) },
           released: expect.any(Number),
           cast: [{ _id: expect.any(String), role: expect.any(String), actor: expect.any(String) }],
           review: expect.any(Array),
