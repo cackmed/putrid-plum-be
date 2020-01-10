@@ -48,9 +48,9 @@ describe('Actor routes', () => {
       .then(res => {
         expect(res.body).toMatchObject({
           _id: actor._id.toString(),
-          name:  actor.name,
+          name:  expect.any(String),
           dob: expect.any(String),
-          pob: actor.pob,
+          pob: expect.any(String),
           films: [{ _id: expect.any(String), title: expect.any(String), released: expect.any(Number) }],
           __v: 0
         });
