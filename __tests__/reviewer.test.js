@@ -46,15 +46,10 @@ describe('Reviewer routes', () => {
       .get(`/api/v1/reviewer/${reviewer._id}`)
       .then(res => {
         expect(res.body).toMatchObject({
-          _id: expect.any(String),
+          _id: reviewer._id.toString(),
           name:  expect.any(String),
           company: expect.any(String),
-          review: [{ 
-            _id: expect.any(String),
-            rating: expect.any(Number),
-            review: expect.any(String),
-            film: { _id: expect.any(String), title: expect.any(String) }
-          }],
+          review: expect.any(Array),
           __v: 0
         });
       });
@@ -81,8 +76,8 @@ describe('Reviewer routes', () => {
     return request(app)
       .delete(`/api/v1/reviewer/${reviewer._id}`)
       .then(res => {
-        expect('unable to delete reviewer that still has existing reviews')
-        });
+        expect('unable to delete reviewer that still has existing reviews');
       });
   });
+  
 });
