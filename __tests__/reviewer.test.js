@@ -75,17 +75,13 @@ describe('Reviewer routes', () => {
         });
       });
   });
-  it('can delete a reviewer with DELETE', async() => {
+  it('can not delete a reviewer with a existing review', async() => {
     jest.setTimeout(30000);
     const reviewer = await getReviewer();
     return request(app)
       .delete(`/api/v1/reviewer/${reviewer._id}`)
       .then(res => {
-        expect(res.body).toEqual({
-          _id: expect.any(String),
-          name: expect.any(String),
-          company: expect.any(String),
-          __v: 0
+        expect('unable to delete reviewer that still has existing reviews')
         });
       });
   });

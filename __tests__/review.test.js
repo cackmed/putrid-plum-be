@@ -33,9 +33,19 @@ describe('Review routes', () => {
     const reviews = await getReviews();
     return request(app)
       .get('/api/v1/review')
-      .then(res => {
+      .then(res => {        
         reviews.forEach(review => {
-          expect(res.body).toContainEqual(JSON.parse(JSON.stringify(review)));
+          expect(res.body).toContainEqual({
+            _id: review._id.toString(),
+            rating:  expect.any(Number),
+            review: expect.any(String),
+            film: {
+              _id: expect.any(String), title: expect.any(String)
+            },
+            __v: 0
+          });
+          expect(res.body).toHaveLength(100);
+
         });
       });
   });
